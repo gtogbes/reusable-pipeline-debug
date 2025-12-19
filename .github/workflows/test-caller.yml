@@ -1,0 +1,27 @@
+name: Test Maven Build Pipeline
+
+on:
+  workflow_dispatch:
+    inputs:
+      dockerfile-path:
+        description: 'Path to Dockerfile (optional)'
+        required: false
+        type: string
+        default: './Dockerfile'
+      project-prefix:
+        description: 'Project prefix for artifacts'
+        required: false
+        type: string
+        default: 'test'
+
+jobs:
+  test-build:
+    uses: health-education-england/.github/.github/workflows/build-maven.yml@TIS21-7971-investigate-composite-action-approach-for-unified-workflows
+    with:
+      dockerfile-path: ${{ inputs.dockerfile-path }}
+      project-prefix: ${{ inputs.project-prefix }}
+      ecr-repository: 'debug-test'
+      java-version: '11'
+      use-codeartifact: false
+    secrets:
+      sonar-token: ${{ secrets.GITHUB_TOKEN }}
