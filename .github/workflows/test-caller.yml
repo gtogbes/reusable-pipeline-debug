@@ -1,18 +1,9 @@
 name: Test Maven Build Pipeline
 
 on:
-  workflow_dispatch:
-    inputs:
-      dockerfile-path:
-        description: 'Path to Dockerfile (optional)'
-        required: false
-        type: string
-        default: './Dockerfile'
-      project-prefix:
-        description: 'Project prefix for artifacts'
-        required: false
-        type: string
-        default: 'test'
+  push:
+    branches:
+      - main
 
 jobs:
   test-build:
