@@ -1,4 +1,4 @@
-name: Test Maven Build Pipeline
+name: CI/CD
 
 on:
   push:
@@ -6,13 +6,26 @@ on:
       - main
 
 jobs:
-  test-build:
-    uses: health-education-england/.github/.github/workflows/build-maven.yml@TIS21-7971-investigate-composite-action-approach-for-unified-workflows
+  get-context:
+    name: Check if debug enabled
+    runs-on: ubuntu-latest
+    outputs:
+      runner-debug: ${{ runner.debug }}
+    steps:
+      - run: echo "Loading context variables"
+  ci-cd:
+    name: Build and deploy
+    needs: get-context
+    uses: health-education-england/.github/.github/workflows/unified-cicd.yml@TIS21-7971-investigate-composite-action-approach-for-unified-workflows
     with:
-      dockerfile-path: ${{ inputs.dockerfile-path }}
-      project-prefix: ${{ inputs.project-prefix }}
-      ecr-repository: 'debug-test'
       java-version: '11'
-      use-codeartifact: false
+      cluster-prefix: test
+      publish-build-scan: ${{ needs.get-context.outputs.runner-debug == '1' }}
+      use-codeartifact: true
+      ecr-repository: test
+      project-prefix: "profile"
+      artifact-modules:  "api,client"
+      dockerfile-path: "./profile-service/Dockerfile"
     secrets:
-      sonar-token: ${{ secrets.GITHUB_TOKEN }}
+      sonar-token: ${{ secrets.SONAR_TOKEN }}
+      reject-pat: ${{ secrets.PAT_REJECT_APPROVALS }}
