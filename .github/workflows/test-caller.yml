@@ -28,7 +28,7 @@ jobs:
       use-codeartifact: true
       ecr-repository: test
       project-prefix: "profile"
-      artifact-modules:  "api,client"
+      artifact-modules:  "api,client,test"
       dockerfile-path: "./profile-service/Dockerfile"
     secrets:
       sonar-token: ${{ secrets.SONAR_TOKEN }}
